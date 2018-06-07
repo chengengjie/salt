@@ -4,6 +4,10 @@ SALT (**S**teiner sh**A**llow-**L**ight **T**ree) is for generating VLSI routing
 It trades off between path length (shallowness) and wirelength (lightness).
 More details are in [ICCAD'17](https://doi.org/10.1109/ICCAD.2017.8203828) paper.
 
+Shallow | Light | SALT
+--------- | --------- | ---------
+![rsa](/toys/RSA_iccad17_example.tree.png) | ![flute](/toys/FLUTE_iccad17_example.tree.png) | ![salt](/toys/SALT_R_iccad17_example.tree.png)
+
 ## Quick Start
 
 The simplest way to build and run SALT is as follows.
@@ -14,7 +18,6 @@ $ ./scripts/build.py -o release
 $ cd run
 $ ./minimal_salt ../toys/iccad17_example.net 1.0
 ~~~
-If you have some questions, later sections may help.
 
 ## Building SALT
 
@@ -64,13 +67,14 @@ $ ./eval_single_salt -net ../toys/iccad17_example.net -eps <epsilon>
 
 First, a file of input nets is needed.
 The nets extracted from [ICCAD'15 Contest Problem B](https://doi.org/10.1109/ICCAD.2015.7372672) can be downloaded via [Dropbox](https://www.dropbox.com/sh/gcq1dh84ko9rjpz/AAAVT0pLZG_FMiOi0ORiKddva?dl=0).
-For each input file, run binary `eval_batch_salt`, which constructs routing trees with several methods and epsilon values:
+For an input file, run binary `eval_batch_salt`:
 ~~~
 $ cd run
 $ ./eval_batch_salt <nets_file> <eval_file_suffix>
 ~~~
-It dumps the evaluation statistics into several files.
-Each file is for a specific ranges of # pins, a specific method, and various epsilon values.
+It constructs routing trees by several methods and epsilon values for an input net.
+The evaluation statistics will be written into several files.
+Each file summarizes the results for a specific range of # pins, a specific method, and various epsilon values.
 
 ### Unit Test
 
@@ -84,12 +88,13 @@ $ ./scripts/build.py -u
 * `scripts`: utility python scripts
 * `src`: c++ source codes
     * `examples`: example application codes
-    * `other_methods`: implemetation of other routing topology generation
-    * `salt`: salt implementation
+    * `other_methods`: implemetation of other routing topology generation methods
+    * `salt`: implementation of SALT
     * `unittest`: unit test
 * `toys`: toy benchmarks
 
-To use SALT in your own project, you only needs module `src/salt`.
+To have a light installation of SALT in your own project, you only needs module `src/salt`.
+See the example [`src/examples/minimal_main.cpp`](src/examples/minimal_main.cpp). 
 
 ## File Formats
 
@@ -101,6 +106,7 @@ Net <net_id> <net_name> <pin_num> [-cap]
 1 x1 y1 [cap1]
 ...
 ~~~
+An example is [here](toys/iccad17_example.net).
 
 ### Tree
 
@@ -113,6 +119,6 @@ Tree <net_id> <net_name> <pin_num> [-cap]
 k xk yk parent_idxk
 ...
 ~~~
-Notes:
-* Tree nodes with indexes [0, pin_num) are pins, others are Steiner.
-* Steiner nodes have no capacitance.
+An example is [here](toys/SALT_R_iccad17_example.tree).
+Note that tree nodes with indexes smaller than pin_num are pins, others are Steiner.
+Also, Steiner nodes have no capacitance.
