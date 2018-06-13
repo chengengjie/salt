@@ -111,7 +111,7 @@ void UpdateSubTree(const shared_ptr<TreeNode> node, array<DTYPE, 2>& res, array<
     // cout<<*node->pin<<", low="<<res[0]<<", up="<<res[1]<<endl;
 }
 
-void AddNode(shared_ptr<TreeNode> c1, shared_ptr<TreeNode> c2, shared_ptr<TreeNode> p, shared_ptr<TreeNode> steiner) {
+void AddNode(shared_ptr<TreeNode> c1, shared_ptr<TreeNode> c2, shared_ptr<TreeNode> p, const shared_ptr<TreeNode>& steiner) {
     // Make sure p is the parent (p>c1, p>c2)
     if (p->parent == c1) swap(p, c1);
     if (p->parent == c2) swap(p, c2);
@@ -133,7 +133,7 @@ void AddNode(shared_ptr<TreeNode> c1, shared_ptr<TreeNode> c2, shared_ptr<TreeNo
 
 int dir2xy[4] = {0, 0, 1, 1};  // down, up, left, right
 
-void TraverseAndAddSteiner(shared_ptr<TreeNode> node, bool low, array<vector<bool>, 2>& bestLowOrUp) {
+void TraverseAndAddSteiner(const shared_ptr<TreeNode>& node, bool low, array<vector<bool>, 2>& bestLowOrUp) {
     // cout<<node->id<<(low?" low":"  up")<<endl;
     // node->Print(0,true);
     if (node->children.empty()) return;

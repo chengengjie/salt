@@ -30,13 +30,14 @@ public:
     friend ostream& operator<<(ostream& os, const TreeNode& node) { node.PrintRecursive(os); return os; }
 
     // Set/reset parent
-    static void SetParent(shared_ptr<TreeNode> childNode, shared_ptr<TreeNode> parentNode);
-    static void ResetParent(shared_ptr<TreeNode> node);
+    static void SetParent(const shared_ptr<TreeNode>& childNode, const shared_ptr<TreeNode>& parentNode);
+    static void ResetParent(const shared_ptr<TreeNode>& node);
+    static bool IsAncestor(const shared_ptr<TreeNode>& ancestor, const shared_ptr<TreeNode>& descendant);
 
     // Traverse
-    static void PreOrder(shared_ptr<TreeNode> node, const function<void(shared_ptr<TreeNode>)>& visit);
-    static void PostOrder(shared_ptr<TreeNode> node, const function<void(shared_ptr<TreeNode>)>& visit);
-    static void PostOrderCopy(shared_ptr<TreeNode> node, const function<void(shared_ptr<TreeNode>)>& visit);
+    static void PreOrder(const shared_ptr<TreeNode>& node, const function<void(const shared_ptr<TreeNode>&)>& visit);
+    static void PostOrder(const shared_ptr<TreeNode>& node, const function<void(const shared_ptr<TreeNode>&)>& visit);
+    static void PostOrderCopy(const shared_ptr<TreeNode>& node, const function<void(const shared_ptr<TreeNode>&)>& visit);
 };
 
 class Tree {
@@ -45,7 +46,7 @@ public:
     const Net* net;
 
     // Note: take care when using copy assign operator and copy constructor. use swap().
-    Tree(shared_ptr<TreeNode> sourceNode = nullptr, const Net* associatedNet = nullptr) : source(sourceNode), net(associatedNet) {}
+    Tree(const shared_ptr<TreeNode>& sourceNode = nullptr, const Net* associatedNet = nullptr) : source(sourceNode), net(associatedNet) {}
     void Reset(bool freeTreeNodes = true);
     ~Tree() { Reset(); }
 
@@ -73,11 +74,11 @@ public:
     friend ostream& operator<<(ostream& os, const Tree& tree) { tree.Print(os); return os; }
 
     // Traverse
-    void PreOrder(const function<void(shared_ptr<TreeNode>)>& visit) { if (source) TreeNode::PreOrder(source, visit); }
-    void PostOrder(const function<void(shared_ptr<TreeNode>)>& visit) { if (source) TreeNode::PostOrder(source, visit); }
-    void PostOrderCopy(const function<void(shared_ptr<TreeNode>)>& visit) { if (source) TreeNode::PostOrderCopy(source, visit); }
-    void PreOrder(const function<void(shared_ptr<TreeNode>)>& visit) const { if (source) TreeNode::PreOrder(source, visit); }
-    void PostOrder(const function<void(shared_ptr<TreeNode>)>& visit) const { if (source) TreeNode::PostOrder(source, visit); }
+    void PreOrder(const function<void(const shared_ptr<TreeNode>&)>& visit) { if (source) TreeNode::PreOrder(source, visit); }
+    void PostOrder(const function<void(const shared_ptr<TreeNode>&)>& visit) { if (source) TreeNode::PostOrder(source, visit); }
+    void PostOrderCopy(const function<void(const shared_ptr<TreeNode>&)>& visit) { if (source) TreeNode::PostOrderCopy(source, visit); }
+    void PreOrder(const function<void(const shared_ptr<TreeNode>&)>& visit) const { if (source) TreeNode::PreOrder(source, visit); }
+    void PostOrder(const function<void(const shared_ptr<TreeNode>&)>& visit) const { if (source) TreeNode::PostOrder(source, visit); }
 
     // Flatten
     int UpdateId();  // update node ids to [0, nodeNum), return nodeNum

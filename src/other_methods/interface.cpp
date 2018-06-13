@@ -10,66 +10,69 @@
 #include "kry.h"
 #include "pd.h"
 
-void GetATree(const salt::Net& net, salt::Tree& tree, TreeType type, double eps, bool checkTree) {
+// TODO: replace switch...case... by hash tables
+void GetATree(const salt::Net& net, salt::Tree& tree, Method type, double eps, bool checkTree) {
     if (eps < 0) {
         cerr << "Error: invalid epsilon value" << endl;
         return;
     }
     switch (type) {
-        case TreeType::FLUTE: {
+        case Method::FLUTE: {
             salt::FluteBuilder fluteB;
             fluteB.Run(net, tree);
             break;
         }
-        case TreeType::RSA: {
+        case Method::RSA: {
             salt::RsaBuilder rsaB;
             rsaB.Run(net, tree);
             break;
         }
-        case TreeType::ESRSA: {
+        case Method::ESRSA: {
             salt::EsRsaBuilder rsaB;
             rsaB.Run(net, tree);
             break;
         }
-        case TreeType::MST: {
+        case Method::MST: {
             salt::MstBuilder mstB;
             mstB.Run(net, tree);
             break;
         }
-        case TreeType::BRBC: {
+        case Method::BRBC: {
             salt::BrbcBuilder brbcB;
             brbcB.Run(net, tree, eps);
             break;
         }
-        case TreeType::KRYS: {
+        case Method::KRYS: {
             salt::KrySimBuilder krysB;
             krysB.Run(net, tree, eps);
             break;
         }
-        case TreeType::KRY: {
+        case Method::KRY: {
             salt::KryBuilder kryB;
             kryB.Run(net, tree, eps);
             break;
         }
-        case TreeType::PD: {
+        case Method::PD: {
             salt::PdBuilder pdB;
             pdB.Run(net, tree, eps);
             break;
         }
-        case TreeType::ES: {
+        case Method::ES: {
             salt::EsBuilder esB;
             esB.Run(net, tree, eps);
             break;
         }
-        case TreeType::BONN: {
+        case Method::BONN: {
             salt::BonnBuilder bonnB;
             bonnB.Run(net, tree, eps);
             break;
         }
-        case TreeType::SALT:
-        case TreeType::SALT_R: {
+        case Method::SALT_R0:
+        case Method::SALT_R1:
+        case Method::SALT_R2:
+        case Method::SALT_R3: {
             salt::SaltBuilder saltB;
-            saltB.Run(net, tree, eps, type == +TreeType::SALT_R);
+            saltB.Run(net, tree, eps, type._to_string()[6] - '0');
             break;
         }
         default:

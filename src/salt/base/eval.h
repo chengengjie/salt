@@ -17,8 +17,9 @@ class WireLengthEval : public WireLengthEvalBase {
 public:
     DTYPE maxPathLength;
     double avgPathLength;
-    double maxStretch;
-    double avgStretch;
+    double norPathLength;  // avgPathLength / avgShortestPathLength
+    double maxStretch;     // max{pathLength / shortestPathLength}
+    double avgStretch;     // avg{pathLength / shortestPathLength}
 
     WireLengthEval() = default;
     void Update(const Tree& tree);
@@ -75,23 +76,28 @@ public:
 
 class CompleteStat {
 public:
-    double norWL = 0, maxStretch = 0, avgStretch = 0, maxNorDelay = 0, avgNorDelay = 0;
+    double norWL = 0, maxStretch = 0, avgStretch = 0, norPathLength = 0, maxNorDelay = 0, avgNorDelay = 0;
     int cnt = 0;
     double eps;
-    void Inc(const CompleteEval& eval) {
+    double time = 0;
+    void Inc(const CompleteEval& eval, double runtime = 0.0) {
         ++cnt;
         norWL += eval.norWL;
         maxStretch += eval.maxStretch;
         avgStretch += eval.avgStretch;
+        norPathLength += eval.norPathLength;
         maxNorDelay += eval.maxNorDelay;
         avgNorDelay += eval.avgNorDelay;
+        time += runtime;
     }
     void Avg() {
         norWL /= cnt;
         maxStretch /= cnt;
         avgStretch /= cnt;
+        norPathLength /= cnt;
         maxNorDelay /= cnt;
         avgNorDelay /= cnt;
+        time /= cnt;
     }
 };
 

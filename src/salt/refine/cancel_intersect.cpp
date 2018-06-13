@@ -77,7 +77,7 @@ void Cancel(array<shared_ptr<TreeNode>, 2> oric) {
 
     // select oric[minD] (i.e., oric[1-minD]->parent)
     // two choices: 1. select shorter path; 2. select shorter edge
-    function<DTYPE(shared_ptr<TreeNode>)> DistToSrc = [&](shared_ptr<TreeNode> node) -> DTYPE {
+    function<DTYPE(const shared_ptr<TreeNode>&)> DistToSrc = [&](const shared_ptr<TreeNode>& node) -> DTYPE {
         if (!node->parent) return 0;
         return DistToSrc(node->parent) + node->WireToParent();
     };

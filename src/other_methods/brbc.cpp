@@ -14,7 +14,7 @@ void BrbcBuilder::ExportPath(const Net& net, Tree& path) {
     path.net = &net;
     path.source = make_shared<TreeNode>(net.source()->loc, net.source(), net.source()->id);
     auto cur = path.source;
-    mst.PreOrder([&](shared_ptr<TreeNode> tn) {
+    mst.PreOrder([&](const shared_ptr<TreeNode>& tn) {
         if (!tn->parent) return;
         auto p = tn->pin;
         auto pre = cur;
@@ -30,7 +30,7 @@ void BrbcBuilder::Run(const Net& net, Tree& tree, double eps) {
     mstB.Run(net, mst);
     Graph g = Graph(net.pins.size());
     boost::property_map<Graph, boost::edge_weight_t>::type weightmap = get(boost::edge_weight, g);
-    mst.PreOrder([&](shared_ptr<TreeNode> tn) {
+    mst.PreOrder([&](const shared_ptr<TreeNode>& tn) {
         if (!tn->parent) return;
         Edge e;
         bool inserted;
@@ -41,7 +41,7 @@ void BrbcBuilder::Run(const Net& net, Tree& tree, double eps) {
     // depth-first tour (n-1 vertices)
     DTYPE curDist = 0, shortestDist;
     Point preLoc = net.source()->loc;
-    mst.PreOrder([&](shared_ptr<TreeNode> tn) {
+    mst.PreOrder([&](const shared_ptr<TreeNode>& tn) {
         if (!tn->parent) return;
         auto p = tn->pin;
         curDist += Dist(p->loc, preLoc);

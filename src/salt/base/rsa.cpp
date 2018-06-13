@@ -30,7 +30,7 @@ void RsaBase::ReplaceRootChildren(Tree& tree) {
 
     // get rsa and graft the old subtrees to it
     Run(tmpNet, tree);
-    tree.PostOrder([&](shared_ptr<TreeNode> node) {
+    tree.PostOrder([&](const shared_ptr<TreeNode>& node) {
         if (node->pin) {
             auto oldNode = pinToOldNode[node->pin];
             if (fakePins.find(node->pin) != fakePins.end()) node->pin = nullptr;
@@ -86,7 +86,7 @@ void RsaBuilder::Run(const Net& net, Tree& tree) {
 
     // shift all pins back
     for (auto& p : net.pins) p->loc += oriSrcLoc;
-    tree.PreOrder([&](shared_ptr<TreeNode> node) { node->loc += oriSrcLoc; });
+    tree.PreOrder([&](const shared_ptr<TreeNode>& node) { node->loc += oriSrcLoc; });
 
     // clear
     for (auto in : innerNodes) delete in;
@@ -132,7 +132,7 @@ bool RsaBuilder::TryMaxOvlpSteinerNode(OuterNode& left, OuterNode& right) {
     return true;
 }
 
-void RsaBuilder::RemoveAnOuterNode(shared_ptr<TreeNode> node, bool delL, bool delR) {
+void RsaBuilder::RemoveAnOuterNode(const shared_ptr<TreeNode>& node, bool delL, bool delR) {
     auto outerCur = outerNodes.find(OuterNodeKey(node));
     assert(outerCur != outerNodes.end());
     InnerNode *innerL = outerCur->second.leftP, *innerR = outerCur->second.rightP;
@@ -173,7 +173,7 @@ bool RsaBuilder::TryDominatingOneSide(OuterNode& p, OuterNode& c) {
     return true;
 }
 
-void RsaBuilder::TryDominating(shared_ptr<TreeNode> node) {
+void RsaBuilder::TryDominating(const shared_ptr<TreeNode>& node) {
     OuterNode outerCur(node);
     if (outerNodes.empty())
         return;
@@ -193,7 +193,7 @@ void RsaBuilder::TryDominating(shared_ptr<TreeNode> node) {
 }
 
 // suppose no case of [node = min(node, an outer node)]
-void RsaBuilder::AddAnOuterNode(shared_ptr<TreeNode> node) {
+void RsaBuilder::AddAnOuterNode(const shared_ptr<TreeNode>& node) {
     OuterNode outerCur(node);
     if (!outerNodes.empty()) {
         // get outerR & outerL

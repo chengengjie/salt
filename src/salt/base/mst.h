@@ -10,6 +10,8 @@ namespace salt {
 class MstBuilder {
 public:
     void Run(const Net& net, Tree& tree);
+
+    // There are some redundancy in adjLists
     void GetAllNearestNeighbors(const vector<Point>& points, vector<vector<int>>& adjLists);
 
 private:
@@ -17,7 +19,8 @@ private:
     void RunPrimAlg(const Net& net, const vector<vector<int>>& adjLists, Tree& tree);
 
     // work in place
-    // for the two boundaries: close on both the clockwise and counter-clockwise ones
+    // handle(i, j): j is the octant-NN of i
+    // close on both boundaries (the clockwise and counter-clockwise ones)
     void GetNearestNeighbors(int maxOctant, vector<pair<Point, int>>& points, function<void(int, int)> handle);
     void GetFirstOctantNearestNeighbors(vector<pair<Point, int>>& points, function<void(int, int)> handle);
 };

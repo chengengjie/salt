@@ -28,14 +28,14 @@ void SaltBase::Finalize(const Net& net, Tree& tree) {
     tree.net = &net;
 }
 
-void SaltBuilder::Run(const Net& net, Tree& tree, double eps, bool refine) {
+void SaltBuilder::Run(const Net& net, Tree& tree, double eps, int refineLevel) {
     // SMT
     Tree smt;
     FluteBuilder fluteB;
     fluteB.Run(net, smt);
 
     // Refine SMT
-    if (refine) {
+    if (refineLevel >= 1) {
         Refine::Flip(smt);
         Refine::UShift(smt);
     }
@@ -53,15 +53,17 @@ void SaltBuilder::Run(const Net& net, Tree& tree, double eps, bool refine) {
     rsaB.ReplaceRootChildren(tree);
 
     // Refine SALT
-    if (refine) {
+    if (refineLevel >= 1) {
         Refine::CancelIntersect(tree);
         Refine::Flip(tree);
         Refine::UShift(tree);
-        Refine::RerootSubtrees(tree, eps, 10);
+        if (refineLevel >= 2) {
+            Refine::Substitute(tree, eps, refineLevel == 3);
+        }
     }
 }
 
-bool SaltBuilder::Relax(shared_ptr<TreeNode> u, shared_ptr<TreeNode> v) {
+bool SaltBuilder::Relax(const shared_ptr<TreeNode>& u, const shared_ptr<TreeNode>& v) {
     DTYPE newDist = curDists[u->id] + Dist(u->loc, v->loc);
     if (curDists[v->id] > newDist) {
         curDists[v->id] = newDist;
@@ -74,7 +76,7 @@ bool SaltBuilder::Relax(shared_ptr<TreeNode> u, shared_ptr<TreeNode> v) {
         return false;
 }
 
-void SaltBuilder::DFS(shared_ptr<TreeNode> smtNode, shared_ptr<TreeNode> slNode, double eps) {
+void SaltBuilder::DFS(const shared_ptr<TreeNode>& smtNode, const shared_ptr<TreeNode>& slNode, double eps) {
     if (smtNode->pin && curDists[slNode->id] > (1 + eps) * shortestDists[slNode->id]) {
         slNode->parent = slSrc;
         curDists[slNode->id] = shortestDists[slNode->id];

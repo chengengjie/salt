@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser(description='Draw Nets/Trees')
 parser.add_argument('input_filenames', nargs='+')
 parser.add_argument('-a', '--anno_text', choices=['no', 'pin_only', 'all'], default='pin_only')
+parser.add_argument('-s', '--scale', type=float, default=1.0)
 args = parser.parse_args()
 
 types = ['Net', 'Tree']
@@ -52,11 +53,11 @@ for filename in args.input_filenames:
             # nodes
             for node in nodes:
                 if node.id is 0: # source
-                    plt.plot(node.x, node.y, c='r', marker='s', mew=0, ms=6)
+                    plt.plot(node.x, node.y, c='r', marker='s', mew=0, ms=6 * args.scale)
                 elif node.id < num_pins: # sinks
-                    plt.plot(node.x, node.y, c='k', marker='s', mew=0, ms=4)
+                    plt.plot(node.x, node.y, c='k', marker='s', mew=0, ms=4 * args.scale)
                 else: # Steiner points
-                    plt.plot(node.x, node.y, c='k', marker='o', mew=0, ms=3)
+                    plt.plot(node.x, node.y, c='k', marker='o', mew=0, ms=3 * args.scale)
                 # anno text
                 if args.anno_text == 'no':
                     continue

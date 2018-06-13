@@ -26,7 +26,7 @@ public:
     shared_ptr<TreeNode> tn;
     DTYPE dist;
     double angle;  // [-pi, pi]
-    InnerNode(shared_ptr<TreeNode> treeNode)
+    InnerNode(const shared_ptr<TreeNode>& treeNode)
         : tn(treeNode), dist(abs(tn->loc.x) + abs(tn->loc.y)), angle(atan2(tn->loc.y, tn->loc.x)) {
         static unsigned gid = 0;
         id = gid++;
@@ -47,7 +47,7 @@ class OuterNode {
 public:
     shared_ptr<TreeNode> cur;   // itself
     InnerNode *leftP, *rightP;  // left parent, right parent
-    OuterNode(shared_ptr<TreeNode> c, InnerNode* l = nullptr, InnerNode* r = nullptr) : cur(c), leftP(l), rightP(r) {}
+    OuterNode(const shared_ptr<TreeNode>& c, InnerNode* l = nullptr, InnerNode* r = nullptr) : cur(c), leftP(l), rightP(r) {}
 };
 
 // RSA Builder
@@ -62,7 +62,7 @@ private:
     // outer nodes
     map<double, OuterNode> outerNodes;
     // the unique key is always guaranteed, better for query/find by key
-    inline double OuterNodeKey(const shared_ptr<TreeNode> tn) { return atan2(tn->loc.y, tn->loc.x); }
+    inline double OuterNodeKey(const shared_ptr<TreeNode>& tn) { return atan2(tn->loc.y, tn->loc.x); }
     // larger angle, counter clockwise, right
     map<double, OuterNode>::iterator NextOuterNode(const map<double, OuterNode>::iterator& it);
     // smaller angle, clockwise, left
@@ -70,12 +70,12 @@ private:
 
     // remove an outer node
     bool TryMaxOvlpSteinerNode(OuterNode& left, OuterNode& right);  // maximize the overlapping
-    void RemoveAnOuterNode(shared_ptr<TreeNode> node, bool delL = true, bool delR = true);
+    void RemoveAnOuterNode(const shared_ptr<TreeNode>& node, bool delL = true, bool delR = true);
 
     // add an outer node
     bool TryDominatingOneSide(OuterNode& p, OuterNode& c);
-    void TryDominating(shared_ptr<TreeNode> node);
-    void AddAnOuterNode(shared_ptr<TreeNode> node);
+    void TryDominating(const shared_ptr<TreeNode>& node);
+    void AddAnOuterNode(const shared_ptr<TreeNode>& node);
 
     // for debug
     void PrintInnerNodes();

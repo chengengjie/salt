@@ -163,7 +163,7 @@ TEST_CASE("Detailed result of complete SALT and statistics of all", "[complete]"
             "16 67 27 11\n";
 
         salt::Tree tree;
-        GetATree(net, tree, TreeType::SALT_R, 1);
+        GetATree(net, tree, Method::SALT_R3, 1);
         ostringstream oss;
         tree.Write(oss);
 
@@ -177,13 +177,13 @@ TEST_CASE("Detailed result of complete SALT and statistics of all", "[complete]"
             "     MST wl=235 mp=182 ap=125.3 ms=3.13793 as=1.48981 md=4.78926e-16 ad=4.78542e-16 mnd=1.11699 and=1.11609\n"
             "      PD wl=274 mp=130 ap=89.3 ms=1.11321 as=1.03613 md=5.57039e-16 ad=5.5664e-16 mnd=1.29917 and=1.29824\n"
             "      ES wl=256 mp=146 ap=102.1 ms=2.24138 as=1.20608 md=5.20983e-16 ad=5.20623e-16 mnd=1.21508 and=1.21424\n"
-            "  SALT_R wl=229 mp=132 ap=89.1 ms=1.22222 as=1.02667 md=4.65601e-16 ad=4.65301e-16 mnd=1.08591 and=1.08521\n";
+            " SALT_R3 wl=229 mp=132 ap=89.1 ms=1.22222 as=1.02667 md=4.65601e-16 ad=4.65301e-16 mnd=1.08591 and=1.08521\n";
 
         salt::ElmoreDelayEval::unitRes = 0.0012675;  // Ohm/dbu
         salt::ElmoreDelayEval::unitCap = 8e-20;      // Farad/dbu
         ostringstream oss;
         for (auto type :
-             {TreeType::FLUTE, TreeType::RSA, TreeType::MST, TreeType::PD, TreeType::ES, TreeType::SALT_R}) {
+             {Method::FLUTE, Method::RSA, Method::MST, Method::PD, Method::ES, Method::SALT_R3}) {
             salt::Tree tree;
             GetATree(net, tree, type, 1);
             salt::WireLengthEval wl(tree);

@@ -7,6 +7,6 @@
 
 // Note: need to set salt::BonnBuilder::unitCap
 
-BETTER_ENUM(TreeType, int, FLUTE, RSA, ESRSA, MST, BRBC, KRYS, KRY, PD, ES, BONN, SALT, SALT_R);
+BETTER_ENUM(Method, int, FLUTE, RSA, ESRSA, MST, BRBC, KRYS, KRY, PD, ES, BONN, SALT_R0, SALT_R1, SALT_R2, SALT_R3);
 
-void GetATree(const salt::Net& net, salt::Tree& tree, TreeType type, double eps, bool checkTree = true);
+void GetATree(const salt::Net& net, salt::Tree& tree, Method type, double eps, bool checkTree = true);

@@ -13,8 +13,8 @@ public:
     void Run(const Net& net, Tree& tree, double eps);
 
 protected:
-    bool Relax(shared_ptr<TreeNode> u, shared_ptr<TreeNode> v);  // from u to v
-    void DFS(shared_ptr<TreeNode> mstNode, shared_ptr<TreeNode> slNode, double eps);
+    bool Relax(const shared_ptr<TreeNode>& u, const shared_ptr<TreeNode>& v);  // from u to v
+    void DFS(const shared_ptr<TreeNode>& mstNode, const shared_ptr<TreeNode>& slNode, double eps);
 };
 
 }  // namespace salt

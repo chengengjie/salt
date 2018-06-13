@@ -14,7 +14,7 @@ void EsRsaBuilder::Run(const Net& net, Tree& tree) {
     MstBuilder mstB;
     mstB.Run(net, mst);
     vector<shared_ptr<TreeNode>> nodes;
-    mst.PreOrder([&](shared_ptr<TreeNode> tn) {
+    mst.PreOrder([&](const shared_ptr<TreeNode>& tn) {
         if (!tn->parent) return;
         auto p = tn->pin;
         nodes.push_back(make_shared<TreeNode>(p->loc, p, p->id));
@@ -61,7 +61,7 @@ void EsRsaBuilder::Run(const Net& net, Tree& tree) {
 
     // shift all pins back
     for (auto& p : net.pins) p->loc += oriSrcLoc;
-    tree.PreOrder([&](shared_ptr<TreeNode> node) { node->loc += oriSrcLoc; });
+    tree.PreOrder([&](const shared_ptr<TreeNode>& node) { node->loc += oriSrcLoc; });
     tree.net = &net;
 }
 

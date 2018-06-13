@@ -18,7 +18,7 @@ void KryBuilder::Run(const Net& net, Tree& tree, double eps) {
     Finalize(net, tree);
 }
 
-bool KryBuilder::Relax(shared_ptr<TreeNode> u, shared_ptr<TreeNode> v) {
+bool KryBuilder::Relax(const shared_ptr<TreeNode>& u, const shared_ptr<TreeNode>& v) {
     DTYPE newDist = curDists[u->id] + Dist(u->loc, v->loc);
     if (curDists[v->id] > newDist) {
         curDists[v->id] = newDist;
@@ -28,7 +28,7 @@ bool KryBuilder::Relax(shared_ptr<TreeNode> u, shared_ptr<TreeNode> v) {
         return false;
 }
 
-void KryBuilder::DFS(shared_ptr<TreeNode> mstNode, shared_ptr<TreeNode> slNode, double eps) {
+void KryBuilder::DFS(const shared_ptr<TreeNode>& mstNode, const shared_ptr<TreeNode>& slNode, double eps) {
     if (curDists[slNode->id] > (1 + eps) * shortestDists[slNode->id]) {
         slNode->parent = slSrc;
         curDists[slNode->id] = shortestDists[slNode->id];

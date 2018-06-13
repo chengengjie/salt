@@ -6,7 +6,7 @@ More details are in [ICCAD'17](https://doi.org/10.1109/ICCAD.2017.8203828) paper
 
 Shallow | Light | SALT
 --------- | --------- | ---------
-![rsa](/toys/RSA_iccad17_example.tree.png) | ![flute](/toys/FLUTE_iccad17_example.tree.png) | ![salt](/toys/SALT_R_iccad17_example.tree.png)
+![rsa](/toys/RSA_toy1.tree.png) | ![flute](/toys/FLUTE_toy1.tree.png) | ![salt](/toys/SALT_toy1.tree.png)
 
 ## Quick Start
 
@@ -16,8 +16,11 @@ $ git clone https://github.com/chengengjie/salt
 $ cd salt
 $ ./scripts/build.py -o release
 $ cd run
-$ ./minimal_salt ../toys/iccad17_example.net 1.0
+$ ./minimal_salt ../toys/toy1.net 1.0
 ~~~
+
+To have a light installation of SALT in your own project, you only need to download folder `src/salt`.
+See the [example](src/examples/minimal_main.cpp) for the usage. 
 
 ## Building SALT
 
@@ -49,18 +52,18 @@ More details are in `scripts/build.py`.
 Go to the `run` directory and run binary `minimal_salt` with a toy net:
 ~~~
 $ cd run
-$ ./minimal_salt ../toys/iccad17_example.net <epsilon>
+$ ./minimal_salt ../toys/toy1.net <epsilon>
 ~~~
 The epsilon is the parameter controlling the trade-off between shallowness and lightness.
-The output will be stored in `SALT_R_iccad17_example.tree` file.
+The output will be stored in file `SALT_toy1.tree`.
 You can visualize it by
 ~~~
-$ ../scripts/draw.py SALT_R_iccad17_example.tree
+$ ../scripts/draw.py SALT_toy1.tree
 ~~~
-Besides, to compare with some other methods, you may run binary `eval_single_salt`:
+Besides, to compare with some other methods (e.g., FLUTE, KRY, BRBC, PD, etc) as well as some other variants of SALT (e.g., without post processing), you may run binary `eval_single_salt`:
 ~~~
 $ cd run
-$ ./eval_single_salt -net ../toys/iccad17_example.net -eps <epsilon>
+$ ./eval_single_salt -net ../toys/toy1.net -eps <epsilon>
 ~~~
 
 ### Batch Test
@@ -72,9 +75,9 @@ For an input file, run binary `eval_batch_salt`:
 $ cd run
 $ ./eval_batch_salt <nets_file> <eval_file_suffix>
 ~~~
-It constructs routing trees by several methods and epsilon values for an input net.
+It constructs routing trees by several methods and epsilon values for each input net.
 The evaluation statistics will be written into several files.
-Each file summarizes the results for a specific range of # pins, a specific method, and various epsilon values.
+Each file summarizes the results for a specific range of # pins and a specific method, under various epsilon values and metrics (e.g., lightness, shallowness, delay, runtime, etc).
 
 ### Unit Test
 
@@ -93,9 +96,6 @@ $ ./scripts/build.py -u
     * `unittest`: unit test
 * `toys`: toy benchmarks
 
-To have a light installation of SALT in your own project, you only needs module `src/salt`.
-See the example [`src/examples/minimal_main.cpp`](src/examples/minimal_main.cpp). 
-
 ## File Formats
 
 ### Net
@@ -106,7 +106,7 @@ Net <net_id> <net_name> <pin_num> [-cap]
 1 x1 y1 [cap1]
 ...
 ~~~
-An example is [here](toys/iccad17_example.net).
+An example is [here](toys/toy1.net).
 
 ### Tree
 
@@ -119,6 +119,6 @@ Tree <net_id> <net_name> <pin_num> [-cap]
 k xk yk parent_idxk
 ...
 ~~~
-An example is [here](toys/SALT_R_iccad17_example.tree).
+An example is [here](toys/SALT_toy1.tree).
 Note that tree nodes with indexes smaller than pin_num are pins, others are Steiner.
 Also, Steiner nodes have no capacitance.

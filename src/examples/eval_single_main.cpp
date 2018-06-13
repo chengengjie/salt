@@ -40,24 +40,26 @@ int main(int argc, char **argv) {
         net.Write("");
     }
 
-    vector<TreeType> types = {TreeType::RSA,
-                              TreeType::FLUTE,
-                              TreeType::BRBC,
-                              TreeType::KRY,
-                              TreeType::PD,
-                              TreeType::ES,
-                              TreeType::BONN,
-                              TreeType::SALT,
-                              TreeType::SALT_R};
-    printlog("type norWL maxStretch avgStretch maxNorDelay avgNorDelay time");
-    for (auto type : types) {
+    vector<Method> methods = {Method::RSA,
+                              Method::FLUTE,
+                              Method::BRBC,
+                              Method::KRY,
+                              Method::PD,
+                              Method::ES,
+                              Method::BONN,
+                              Method::SALT_R0,
+                              Method::SALT_R1,
+                              Method::SALT_R2,
+                              Method::SALT_R3};
+    printlog("method norWL maxStretch avgStretch maxNorDelay avgNorDelay time");
+    for (auto method : methods) {
         salt::Tree tree;
         utils::timer time;
-        GetATree(net, tree, type, eps);
+        GetATree(net, tree, method, eps);
         salt::CompleteEval eval(driverResistance, tree);
-        log() << setw(8) << type << '\t' << eval.norWL << '\t' << eval.maxStretch << '\t' << eval.avgStretch << '\t'
+        log() << setw(8) << method << '\t' << eval.norWL << '\t' << eval.maxStretch << '\t' << eval.avgStretch << '\t'
               << eval.maxNorDelay << '\t' << eval.avgNorDelay << '\t' << time.elapsed() << endl;
-        tree.Write(type._to_string());
+        tree.Write(method._to_string());
     }
 
     printlog("================================================================================");

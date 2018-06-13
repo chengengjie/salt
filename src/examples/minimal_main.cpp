@@ -1,5 +1,6 @@
 #include "salt/salt.h"
-#include "salt/base/eval.h"
+
+#include "salt/base/eval.h"  // for salt::WireLengthEval
 
 int main(int argc, char **argv) {
     printlog("================================================================================");
@@ -31,7 +32,7 @@ int main(int argc, char **argv) {
     printlog("Avg path length is", eval.avgPathLength);
     printlog("Max stretch (shallowness) is", eval.maxStretch);
     printlog("Avg stretch is", eval.avgStretch);
-    tree.Write("SALT_R");
+    tree.Write("SALT");
 
     printlog("================================================================================");
     printlog("                                      Done ...                                  ");

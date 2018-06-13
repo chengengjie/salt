@@ -34,12 +34,12 @@ void TreeNode::PrintRecursive(ostream& os) const {
     PrintRecursiveHelp(os, prefix);
 }
 
-void TreeNode::SetParent(shared_ptr<TreeNode> childNode, shared_ptr<TreeNode> parentNode) {
+void TreeNode::SetParent(const shared_ptr<TreeNode>& childNode, const shared_ptr<TreeNode>& parentNode) {
     childNode->parent = parentNode;
     parentNode->children.push_back(childNode);
 }
 
-void TreeNode::ResetParent(shared_ptr<TreeNode> node) {
+void TreeNode::ResetParent(const shared_ptr<TreeNode>& node) {
     assert(node->parent);
 
     auto& n = node->parent->children;
@@ -51,17 +51,28 @@ void TreeNode::ResetParent(shared_ptr<TreeNode> node) {
     node->parent.reset();
 }
 
-void TreeNode::PreOrder(shared_ptr<TreeNode> node, const function<void(shared_ptr<TreeNode>)>& visit) {
+bool TreeNode::IsAncestor(const shared_ptr<TreeNode>& ancestor, const shared_ptr<TreeNode>& descendant) {
+    auto tmp = descendant;
+    do {
+        if (tmp == ancestor) {
+            return true;
+        }
+        tmp = tmp->parent;
+    } while (tmp);
+    return false;
+}
+
+void TreeNode::PreOrder(const shared_ptr<TreeNode>& node, const function<void(const shared_ptr<TreeNode>&)>& visit) {
     visit(node);
     for (auto c : node->children) PreOrder(c, visit);
 }
 
-void TreeNode::PostOrder(shared_ptr<TreeNode> node, const function<void(shared_ptr<TreeNode>)>& visit) {
+void TreeNode::PostOrder(const shared_ptr<TreeNode>& node, const function<void(const shared_ptr<TreeNode>&)>& visit) {
     for (auto c : node->children) PostOrder(c, visit);
     visit(node);
 }
 
-void TreeNode::PostOrderCopy(shared_ptr<TreeNode> node, const function<void(shared_ptr<TreeNode>)>& visit) {
+void TreeNode::PostOrderCopy(const shared_ptr<TreeNode>& node, const function<void(const shared_ptr<TreeNode>&)>& visit) {
     auto tmp = node->children;
     for (auto c : tmp) PostOrderCopy(c, visit);
     visit(node);
@@ -69,7 +80,7 @@ void TreeNode::PostOrderCopy(shared_ptr<TreeNode> node, const function<void(shar
 
 void Tree::Reset(bool freeTreeNodes) {
     if (freeTreeNodes) {
-        PostOrder([](shared_ptr<TreeNode> node) { node->children.clear(); });
+        PostOrder([](const shared_ptr<TreeNode>& node) { node->children.clear(); });
     }
     source.reset();
     net = nullptr;
@@ -188,7 +199,7 @@ void Tree::Print(ostream& os) const {
 
 int Tree::UpdateId() {
     int numNode = net->pins.size();
-    PreOrder([&](shared_ptr<TreeNode> node) {
+    PreOrder([&](const shared_ptr<TreeNode>& node) {
         if (node->pin) {
             assert(node->pin->id < net->pins.size());
             node->id = node->pin->id;
@@ -200,12 +211,12 @@ int Tree::UpdateId() {
 
 vector<shared_ptr<TreeNode>> Tree::ObtainNodes() const {
     vector<shared_ptr<TreeNode>> nodes;
-    PreOrder([&](shared_ptr<TreeNode> node) { nodes.push_back(node); });
+    PreOrder([&](const shared_ptr<TreeNode>& node) { nodes.push_back(node); });
     return nodes;
 }
 
 void Tree::SetParentFromChildren() {
-    PreOrder([](shared_ptr<TreeNode> node) {
+    PreOrder([](const shared_ptr<TreeNode>& node) {
         for (auto& c : node->children) {
             c->parent = node;
         }
@@ -213,7 +224,7 @@ void Tree::SetParentFromChildren() {
 }
 
 void Tree::SetParentFromUndirectedAdjList() {
-    PreOrder([](shared_ptr<TreeNode> node) {
+    PreOrder([](const shared_ptr<TreeNode>& node) {
         for (auto& c : node->children) {
             auto& n = c->children;
             auto it = find(n.begin(), n.end(), node);
@@ -226,7 +237,7 @@ void Tree::SetParentFromUndirectedAdjList() {
 }
 
 void Tree::Reroot() {
-    function<void(shared_ptr<TreeNode>)> reroot = [&](shared_ptr<TreeNode> node) {
+    function<void(const shared_ptr<TreeNode>&)> reroot = [&](const shared_ptr<TreeNode>& node) {
         if (node->parent) {
             reroot(node->parent);
             auto oldParent = node->parent;
@@ -240,7 +251,7 @@ void Tree::Reroot() {
 void Tree::QuickCheck() {
     int numPin = net->pins.size(), numChecked = 0;
     vector<bool> pinExist(numPin, false);
-    PreOrder([&](shared_ptr<TreeNode> node) {
+    PreOrder([&](const shared_ptr<TreeNode>& node) {
         if (!node) {
             cerr << "Error: empty node" << endl;
         }
@@ -264,7 +275,7 @@ void Tree::QuickCheck() {
 }
 
 void Tree::RemovePhyRedundantSteiner() {
-    PostOrderCopy([](shared_ptr<TreeNode> node) {
+    PostOrderCopy([](const shared_ptr<TreeNode>& node) {
         if (!node->parent || node->loc != node->parent->loc) return;
         if (node->pin) {
             assert(!node->parent->pin);
@@ -276,7 +287,7 @@ void Tree::RemovePhyRedundantSteiner() {
 }
 
 void Tree::RemoveTopoRedundantSteiner() {
-    PostOrderCopy([](shared_ptr<TreeNode> node) {
+    PostOrderCopy([](const shared_ptr<TreeNode>& node) {
         // degree may change after post-order traversal of its children
         if (node->pin) return;
         if (node->children.empty()) {
@@ -291,7 +302,7 @@ void Tree::RemoveTopoRedundantSteiner() {
 }
 
 void Tree::RemoveEmptyChildren() {
-    PreOrder([](shared_ptr<TreeNode> node) {
+    PreOrder([](const shared_ptr<TreeNode>& node) {
         int size = 0;
         for (int i = 0; i < node->children.size(); ++i) {
             if (node->children[i]) node->children[size++] = node->children[i];

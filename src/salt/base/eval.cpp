@@ -7,7 +7,7 @@ namespace salt {
 
 void WireLengthEvalBase::Update(const Tree& tree) {
     wireLength = 0;
-    tree.PostOrder([&](shared_ptr<TreeNode> node) {
+    tree.PostOrder([&](const shared_ptr<TreeNode>& node) {
         if (node->parent) {
             wireLength += node->WireToParent();
         }
@@ -19,13 +19,14 @@ void WireLengthEval::Update(const Tree& tree) {
     WireLengthEvalBase::Update(tree);
     // path
     vector<DTYPE> pathLength(tree.net->pins.size());
-    function<void(shared_ptr<TreeNode>, DTYPE)> traverse = [&](shared_ptr<TreeNode> node, DTYPE curDist) {
+    function<void(const shared_ptr<TreeNode>&, DTYPE)> traverse = [&](const shared_ptr<TreeNode>& node, DTYPE curDist) {
         if (node->pin) pathLength[node->pin->id] = curDist;
         for (auto c : node->children) traverse(c, curDist + c->WireToParent());
     };
     traverse(tree.source, 0);
     maxPathLength = 0;
-    avgPathLength = 0;
+    double totalPathLength = 0;
+    double totalShortestPathLength = 0;
     maxStretch = 0;
     avgStretch = 0;
     for (auto p : tree.net->pins) {
@@ -34,13 +35,15 @@ void WireLengthEval::Update(const Tree& tree) {
             double stretch = double(pl) / sp;
             // cout << p->id << " " << stretch << endl;
             if (pl > maxPathLength) maxPathLength = pl;
-            avgPathLength += pl;
+            totalPathLength += pl;
+            totalShortestPathLength += sp;
             if (stretch > maxStretch) maxStretch = stretch;
             avgStretch += stretch;
         }
     }
     auto numSink = tree.net->pins.size() - 1;
-    avgPathLength /= numSink;
+    avgPathLength = totalPathLength / numSink;
+    norPathLength = totalPathLength / totalShortestPathLength;
     avgStretch /= numSink;
 }
 
@@ -57,7 +60,7 @@ void ElmoreDelayEval::Update(double rd, Tree& tree, bool normalize) {
     maxDelay = avgDelay = maxNorDelay = avgNorDelay = 0;
 
     auto delay = GetDelay(rd, tree, numNodes);  // delay for all tree nodes
-    tree.PreOrder([&](shared_ptr<TreeNode> node) {
+    tree.PreOrder([&](const shared_ptr<TreeNode>& node) {
         if (!node->pin || node == tree.source) return;
         maxDelay = max(maxDelay, delay[node->id]);
         avgDelay += delay[node->id];
@@ -67,7 +70,7 @@ void ElmoreDelayEval::Update(double rd, Tree& tree, bool normalize) {
     if (!normalize) return;
 
     auto lb = GetDelayLB(rd, tree);  // delay lb for all pins, 0 is source
-    // tree.PreOrder([&](shared_ptr<TreeNode> node){
+    // tree.PreOrder([&](const shared_ptr<TreeNode>& node){
     // 	if(!node->pin || node == tree.source) return;
     // 	double norDelay = delay[node->id] / lb[node->id];
     // 	maxNorDelay = max(maxNorDelay, norDelay);
@@ -82,7 +85,7 @@ void ElmoreDelayEval::Update(double rd, Tree& tree, bool normalize) {
 vector<double> ElmoreDelayEval::GetDelay(double rd, const Tree& tree, int numNode) {
     // get node cap by post-order traversal
     vector<double> cap(numNode, 0);
-    tree.PostOrder([&](shared_ptr<TreeNode> node) {
+    tree.PostOrder([&](const shared_ptr<TreeNode>& node) {
         if (node->pin && node != tree.source) cap[node->id] = node->pin->cap;
         for (auto c : node->children) {
             cap[node->id] += cap[c->id];
@@ -92,7 +95,7 @@ vector<double> ElmoreDelayEval::GetDelay(double rd, const Tree& tree, int numNod
 
     // get delay by post-order traversal
     vector<double> delay(numNode, 0);
-    tree.PreOrder([&](shared_ptr<TreeNode> node) {
+    tree.PreOrder([&](const shared_ptr<TreeNode>& node) {
         if (node == tree.source)
             delay[node->id] = rd * cap[node->id];
         else {
