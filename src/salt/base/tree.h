@@ -29,9 +29,10 @@ public:
     void PrintRecursive(ostream& os = cout) const; 
     friend ostream& operator<<(ostream& os, const TreeNode& node) { node.PrintRecursive(os); return os; }
 
-    // Set/reset parent
+    // Set/reset/check parent/ancestor
     static void SetParent(const shared_ptr<TreeNode>& childNode, const shared_ptr<TreeNode>& parentNode);
     static void ResetParent(const shared_ptr<TreeNode>& node);
+    static void Reroot(const shared_ptr<TreeNode>& node);
     static bool IsAncestor(const shared_ptr<TreeNode>& ancestor, const shared_ptr<TreeNode>& descendant);
 
     // Traverse

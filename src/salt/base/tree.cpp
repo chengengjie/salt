@@ -51,6 +51,15 @@ void TreeNode::ResetParent(const shared_ptr<TreeNode>& node) {
     node->parent.reset();
 }
 
+void TreeNode::Reroot(const shared_ptr<TreeNode>& node) {
+    if (node->parent) {
+        Reroot(node->parent);
+        auto oldParent = node->parent;
+        TreeNode::ResetParent(node);
+        TreeNode::SetParent(oldParent, node);
+    }
+}
+
 bool TreeNode::IsAncestor(const shared_ptr<TreeNode>& ancestor, const shared_ptr<TreeNode>& descendant) {
     auto tmp = descendant;
     do {
@@ -237,15 +246,7 @@ void Tree::SetParentFromUndirectedAdjList() {
 }
 
 void Tree::Reroot() {
-    function<void(const shared_ptr<TreeNode>&)> reroot = [&](const shared_ptr<TreeNode>& node) {
-        if (node->parent) {
-            reroot(node->parent);
-            auto oldParent = node->parent;
-            TreeNode::ResetParent(node);
-            TreeNode::SetParent(oldParent, node);
-        }
-    };
-    reroot(source);
+    TreeNode::Reroot(source);
 }
 
 void Tree::QuickCheck() {
