@@ -4,7 +4,7 @@ SALT (**S**teiner sh**A**llow-**L**ight **T**ree) is for generating VLSI routing
 It trades off between path length (shallowness) and wirelength (lightness).
 More details are in [ICCAD'17](https://doi.org/10.1109/ICCAD.2017.8203828) paper.
 
-Shallow | Light | SALT
+Shallow | Light | SALT (shallow-light)
 --------- | --------- | ---------
 ![rsa](/toys/RSA_toy1.tree.png) | ![flute](/toys/FLUTE_toy1.tree.png) | ![salt](/toys/SALT_toy1.tree.png)
 
@@ -40,10 +40,10 @@ More details are in `scripts/build.py`.
 
 ### Dependencies
 
-* g++ (version >= 5.4.0)
+* g++ (version >= 5.4.0) or other working c++ compliers
 * CMake (version >= 3.5.1)
 * Boost (version >= 1.58)
-* Python (version 3)
+* Python (version 3, optional, for utility scripts)
 
 ## Runing SALT
 
