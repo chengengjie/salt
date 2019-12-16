@@ -81,8 +81,8 @@ bool ParseArgs(int argc, char **argv) {
             eps = atof(argv[++i]);
         else {
             cerr << "Unknown parameter: " << argv[i] << endl;
-            cerr << "Usage 1: " << argv[0] << "-net <.net> [-eps <epsilon>]" << endl;
-            cerr << "Usage 2: " << argv[0] << "-pin <pin_num> [-seed <rand_seed> -eps <epsilon>]" << endl;
+            cerr << "Usage 1: " << argv[0] << " -net <.net> [-eps <epsilon>]" << endl;
+            cerr << "Usage 2: " << argv[0] << " -pin <pin_num> [-seed <rand_seed> -eps <epsilon>]" << endl;
             return false;
         }
     }
