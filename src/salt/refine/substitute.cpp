@@ -132,8 +132,8 @@ void Refine::Substitute(Tree& tree, double eps, bool useRTree) {
         tree.PostOrder(UpdateSlacks);
 
         // Find legal candidate moves
-        vector<tuple<DTYPE, shared_ptr<TreeNode>, shared_ptr<TreeNode>>>
-            candidateMoves;  // <wireLengthDelta, node, newParent>
+        using MoveT = tuple<DTYPE, shared_ptr<TreeNode>, shared_ptr<TreeNode>>;
+        vector<MoveT> candidateMoves;  // <wireLengthDelta, node, newParent>
         auto GetNearestPoint = [](const shared_ptr<TreeNode>& target, const shared_ptr<TreeNode>& neigh) {
             Box box(neigh->loc, neigh->parent->loc);
             box.Legalize();
@@ -170,7 +170,9 @@ void Refine::Substitute(Tree& tree, double eps, bool useRTree) {
 
         // Try candidate moves in the order of descending wire length savings
         // Note that earlier moves may influence the legality of later one
-        sort(candidateMoves.begin(), candidateMoves.end());
+        sort(candidateMoves.begin(), candidateMoves.end(), [](const MoveT& lhs, const MoveT& rhs){
+            return get<0>(lhs) < get<0>(rhs);
+        });
         for (const auto& move : candidateMoves) {
             auto node = get<1>(move), neigh = get<2>(move);
             auto neighParent = neigh->parent;
