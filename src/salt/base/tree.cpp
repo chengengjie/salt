@@ -279,7 +279,7 @@ void Tree::RemovePhyRedundantSteiner() {
     PostOrderCopy([](const shared_ptr<TreeNode>& node) {
         if (!node->parent || node->loc != node->parent->loc) return;
         if (node->pin) {
-            assert(!node->parent->pin);
+            if (node->parent->pin && node->parent->pin != node->pin) return;
             node->parent->pin = node->pin;
         }
         for (auto c : node->children) TreeNode::SetParent(c, node->parent);
