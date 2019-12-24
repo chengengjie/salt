@@ -69,7 +69,7 @@ bool SaltBuilder::Relax(const shared_ptr<TreeNode>& u, const shared_ptr<TreeNode
         curDists[v->id] = newDist;
         v->parent = u;
         return true;
-    } else if (curDists[v->id] == newDist && Dist(u->loc, v->loc) < v->WireToParent()) {
+    } else if (curDists[v->id] == newDist && Dist(u->loc, v->loc) < v->WireToParentChecked()) {
         v->parent = u;
         return true;
     } else
