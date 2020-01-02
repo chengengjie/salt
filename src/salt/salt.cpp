@@ -15,7 +15,7 @@ void SaltBase::Init(Tree& minTree, shared_ptr<Pin> srcP) {
     for (auto mtN : mtNodes) {
         slNodes[mtN->id] = make_shared<TreeNode>(mtN->loc, mtN->pin, mtN->id);
         shortestDists[mtN->id] = Dist(mtN->loc, srcP->loc);
-        curDists[mtN->id] = numeric_limits<int>::max();
+        curDists[mtN->id] = numeric_limits<DTYPE>::max();
     }
     curDists[srcP->id] = 0;
     slSrc = slNodes[srcP->id];
