@@ -3,10 +3,12 @@ cmake_minimum_required(VERSION 3.5.1)
 
 # CMake Options
 set(CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_COMPILER ${CMAKE_CXX_COMPILER}) # use g++ for .c files (flute)
 
-include_directories(${PROJECT_SOURCE_DIR})
+find_package(Boost REQUIRED)
+find_package(Catch2 3 REQUIRED)
+include_directories(${PROJECT_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
 file(GLOB SALT_SRCS salt/*.cpp salt/*/*.cpp salt/base/flute/*.c)
 file(GLOB OTHER_METHODS_SRCS other_methods/*.cpp)
 add_library(salt STATIC ${SALT_SRCS})
@@ -14,7 +16,7 @@ add_library(other_methods OBJECT ${OTHER_METHODS_SRCS})
 
 # unittest_salt
 add_executable(unittest_salt unittest/unittest_main.cpp $<TARGET_OBJECTS:other_methods>)
-target_link_libraries(unittest_salt salt)
+target_link_libraries(unittest_salt PRIVATE salt Catch2::Catch2WithMain )
 
 # minimal_salt
 add_executable(minimal_salt examples/minimal_main.cpp)
